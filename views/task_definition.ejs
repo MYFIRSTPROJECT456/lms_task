@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<%- include lib/apicalh01 %>
+<style type="text/css">
+input,
+textarea,
+select {
+  margin: 0 0 10px 0;
+}
+.element {
+  position: relative;
+  top: 50%;
+  transform: translateY(-10%);
+}
+</style>
+<script>
+  var taskid = "";
+  var Screenfields = [];
+</script>
+
+<body>
+  <!-- begin #page-loader -->
+  <div id="page-loader" class="fade in"><span class="spinner"></span></div>
+  <!-- end #page-loader -->
+
+  <!-- begin #page-container -->
+  <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+    <!-- begin #header -->
+    <%- include lib/apicalh02 %>
+    <!-- end #sidebar -->
+
+    <!-- begin #content -->
+    <div id="content" class="content">
+      <div class="row">
+        <!-- begin col-10 -->
+        <div class="col-md-12">
+          <div class="panel panel-inverse">
+            <div class="panel-heading">
+              <div class="panel-heading-btn element">
+               <a href="javascript:createdialog();" class="btn btn-success btn-icon btn-circle"><i class="fa fa-plus fa-1x" ></i></a>
+             </div>
+             <h4 class="panel-title">Task Definition master</h4>
+           </div>
+           <div class="panel-body">
+            <table id="data-table" class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                 <th>Task Group name</th>
+                 <th>Task Name</th>
+                 <th>Task Description</th>
+                 <th>Estimated Hours</th>
+                 <th>Parent Task name</th>
+                 <th>Document list</th>
+               </tr>
+             </thead>
+             <tbody>
+              <% 
+              tasklist.forEach (function(list){               
+              %>
+              <tr id="<%= list.tasksrno %>">
+
+               <td>
+                <%= list.task_group %>
+              </td>
+
+              <td>
+                <%= list.tdefname %>
+              </td>
+              <td>
+                <%= list.tdefdesc %>
+              </td>
+              <td>
+                <%= list.tdefesthrs %>
+              </td>
+              <td>
+                <%= list.prtask %>
+              </td>
+              <td>
+                <%= list.doclist %>
+              </td>
+            </tr>
+            <% }); %>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col-10 -->
+</div>
+<!-- end row -->
+
+<div class="modal fade" id="modal-dialog">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Create Task</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- begin col-6 -->
+          <form action="#" method="POST" id="formf" data-parsley-validate="true">
+           
+            <div class="row" style="padding: 10px;">
+              <!-- begin col-6 -->
+
+              
+              
+              <label class="control-label col-md-4">Task Group name</label>
+              <div class="col-md-8">
+                <select class="form-control selectpicker" name="task_group" api="v1/gettaskgroups" required>
+                  <option value="NA" selected>NA</option>
+                </select>
+                <div id="divtask_group" hidden="true">
+                  <input type="text" name="task_group_alt" placeholder="Task Group Name" class="form-control" hidden="true" />
+                </div>
+              </div>
+              
+
+              <label class="col-md-4">Task Name </label>
+              <div class="col-md-8">
+               <input type="text" name="taskname" placeholder="Task Name" class="form-control" value="" required="" />
+             </div>
+             <label class="col-md-4">Description </label>
+             <div class="col-md-8">
+               <textarea class="form-control" placeholder="Task Description" rows="5" name="description" required=""></textarea>
+             </div>
+
+             <label class="control-label col-md-4">Parent Task</label>
+             <div class="col-md-8">
+              <select class="form-control selectpicker" name="parent_task">
+                <option value="" selected>NA</option>
+              </select>
+            </div>
+            <label class="col-md-4">Estimated Hours </label>
+            <div class="col-md-8">
+             <input type="number" maxlength="3" min="1" name="estmatehr" placeholder="Estimated Hours" class="form-control" value="" data-parsley-type="digits" required="" />
+           </div>
+
+           <label class="col-md-4 ">Document List </label>
+           <div class="col-md-8">
+             <select class="form-control multipleSelect"  data-style="btn-white" name="doclist" api="v1/getdoclist" placeholder="Select Documents" id="doclist" multiple style="width: 100%">
+              <option value="NA" selected>NA</option>
+            </select>
+          </div>
+          
+
+          <!-- end col-6 -->
+
+        </div>
+        <!-- end row -->
+        
+      </form>
+      <!-- end col-6 -->
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+    <a href="javascript:onSubmit();" class="btn btn-sm btn-success">Done</a>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<!-- end #content -->
+
+<!-- begin theme-panel -->
+
+<!-- end theme-panel -->
+
+<!-- begin scroll to top btn -->
+<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+<!-- end scroll to top btn -->
+</div>
+<!-- end page container -->
+
+<!-- ================== BEGIN BASE JS ================== -->
+<%- include lib/apicalf02 %>
+<!-- ================== END BASE JS ================== -->
+<script>
+  $(document).ready(function() {
+    App.init();
+
+    $('select').on('change', function() {
+
+                            // alert('onchange'+this.value+this.name);
+                            if (this.name == 'task_group') {
+                              var dvalue = this.value;
+                                if (this.value == '241') { // value taken from masterdata
+                                  $("#divtask_group").show();
+                                  $("#divtask_group input").prop('required',true);  
+                                } else {
+                                  $("#divtask_group").hide();
+                                  $("#divtask_group input").prop('required',false); 
+
+                                  var input = $("select[name ='parent_task']");
+                                  $.ajax({
+                                    type: "POST",
+                                    url: "v1/getddtasks",
+                                    timeout: 6000,
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({
+                                     formdata: JSON.stringify(dvalue)
+                                   }),
+                                    success: function(data)
+                                    {
+                                      helpers.buildDropdown(
+                                        JSON.parse(JSON.stringify(data)),
+                                        input,
+                                        'Select an option'
+                                        );
+                                    },
+                                    error:function(xhr, status,error){
+                                //                                        alert(status+" "+error.Message+" "+xhr.responseText); 
+                              }      
+                            });
+                                  
+                                  
+
+
+                                }
+                              }
+                            });
+
+
+
+
+  });
+
+  var table = $('#data-table').DataTable({
+    dom: 'lBfrtip',
+    buttons: [
+    { extend: 'copy', className: 'btn-sm' },
+    { extend: 'csv', className: 'btn-sm' },
+    { extend: 'excel', className: 'btn-sm' },
+    { extend: 'pdf', className: 'btn-sm' },
+    { extend: 'print', className: 'btn-sm' }
+    ],
+    responsive: true
+  });
+
+  $('#modal-dialog').on('hidden.bs.modal', function () {
+                    // $('#formf').trigger("reset");
+                    $(this).find("input,textarea,select").val('').end();   
+                    
+                    //reset multiselect
+                    $(".multipleselect").select2('destroy');
+                    $(".multipleSelect").select2();
+                    
+                    $('#formf').parsley().destroy();
+                    $('#formf').validate().resetForm();  
+                  })
+  function onSubmit() {
+                      //  alert("funcntion called");
+                      /*    var scrno = '555';*/
+                      var form = $('#formf');
+                      form.parsley().validate();
+                      if (form.parsley().isValid()) {
+                        var formdata = $('#formf').serializeArray();
+
+                            //structure json
+                            var data = formdata.reduce(function(a, x) {
+                              a[x.name] = x.value;
+                              return a;
+                            }, {});
+
+                            var multi=$("#doclist").val();
+                            if(multi !=null){
+                                data["doclist"]=multi.toString();
+                            }else{
+                                data["doclist"]='';  
+                            }
+
+                            Screenfields.push(data);
+                          $.ajax({
+                            type: "POST",
+                            url: "/savetaskdef",
+                            timeout: 6000,
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                             formdata: JSON.stringify(Screenfields)
+                           }),
+                            success: function(data) {
+                              var fdata = JSON.parse(JSON.stringify(data));
+                              if (fdata.status == '0') {
+                                Screenfields = [];
+                                alert("Data saved successfully");
+                                window.location.reload();
+                              } else {
+                                alert(fdata.status_msg);
+                                Screenfields = [];
+                              }
+                            },error: function(xhr, status, error) {
+                             
+                              alert("Please select the proper details");
+                              Screenfields = [];
+                            }
+                          });
+                        } else {
+                          alert('Form not valid');
+                        }
+                      };
+
+                      function createdialog() {
+              $('#modal-dialog').modal('show');
+}
+
+</script>
+</body>
+
+</html>

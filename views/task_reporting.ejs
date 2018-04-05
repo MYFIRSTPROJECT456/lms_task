@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<%- include lib/apicalh01 %>
+
+    <!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
+    <link href="assets/plugins/bootstrap-wizard/css/bwizard.min.css" rel="stylesheet" />
+    <!-- ================== END PAGE LEVEL STYLE ================== -->
+    <style type="text/css">
+        input,
+        textarea,
+        select,
+        .multipleSelect,
+        .selectpicker,
+        .datepicker {
+            margin: 0 0 10px 0;
+        }
+        
+        .element {
+            position: relative;
+            top: 50%;
+            transform: translateY(-10%);
+        }
+        
+    </style>
+
+    <style>
+        p {
+            margin: 0 0 5px 0;
+        }
+        
+        
+        .historyview
+            {
+                background-color:#d4d5d8;
+            }
+    </style>
+
+    <script>
+        var taskid = "";
+        var History = [];
+        var Screenfields = [];
+    </script>
+
+    <body>
+        <!-- begin #page-loader -->
+        <div id="page-loader" class="fade in"><span class="spinner"></span></div>
+        <!-- end #page-loader -->
+
+        <!-- begin #page-container -->
+        <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+            <%- include lib/apicalh02 %>
+                <!-- end #sidebar -->
+
+                <!-- begin #content -->
+                <div id="content" class="content">
+                    <!-- begin breadcrumb -->
+
+                    <!-- end breadcrumb -->
+                    <!-- begin page-header -->
+                    <!-- <h1 class="page-header">Wizards <small>header small text goes here...</small></h1> -->
+                    <!-- end page-header -->
+
+                    <!-- begin row -->
+                    <div class="row">
+                        <!-- begin col-12 -->
+                        <div class="col-md-12">
+                            <!-- begin panel -->
+                            <div class="panel panel-inverse">
+                                <div class="panel-heading">
+                                    <div class="panel-heading-btn element">
+                                        <a href="javascript:onSubmit();" class="btn btn-xl btn-icon btn-circle btn-success"><i class="fa fa-save" ></i></a>
+                                    </div>
+                                    <h4 class="panel-title">Task Reporting</h4>
+                                </div>
+                                <div class="panel-body historyview" >
+
+                                    <!-- begin row -->
+                                    <div class="row ">
+                                        <!-- begin col-6 -->
+                                        <div class="col-md-6">
+                                            <form action="/" method="POST" id="formf" data-parsley-validate="true">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 control-label">Project Name</label>
+                                                        <div class="col-md-9">
+                                                           <input type="text" class="form-control" name="prjid" readonly/>
+                                                            <input type="hidden" class="form-control" name="prjname" />
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <input type="hidden" class="form-control" name="taskid" />
+                                                        </div>
+
+                                                        <label class="col-md-3 control-label">Task Name</label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" class="form-control" name="taskname" placeholder="Task Name" required readonly />
+                                                        </div>
+
+                                                        <label class="col-md-3 control-label">Task Description</label>
+                                                        <div class="col-md-9">
+                                                            <textarea class="form-control" name="taskdesc" placeholder="Task Description" required readonly></textarea>
+                                                        </div>
+
+                                                        <label class="col-md-3 control-label">Due Date</label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" class="form-control datepicker" name="duedate" placeholder="Due Date" />
+                                                        </div>
+
+                                                        <label class="col-md-3 control-label">Assign to</label>
+                                                        <div class="col-md-9">
+                                                            <!--  <select class="form-control selectpicker" data-size="10"  data-style="btn-white" name="assignto" api="v1/getassignto" required>
+                                                               <option value="NA" selected>NA</option>
+                                                                                                                        </select> -->
+                                                        <select class="form-control multipleSelect" name="assignto" api="v1/getassignto" placeholder="Select Assign" id="assignlist" multiple style="width: 100%" required>
+                                                        <option value="NA" selected>NA</option>
+                                                                                                         </select>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <input type="hidden" class="form-control" name="esthours" placeholder="Estimate hours" readonly />
+                                                        </div>
+                                                         <div id="empty_div" style="height:10px" class="col-md-12 ">
+                                                            <label class="col-md-4 "></label>
+                                                        </div>
+                                                        <label class="col-md-3 control-label">Task Status</label>
+                                                        <div class="col-md-9">
+                                                            <select class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-white" name="status" api="v1/getstatus" required>
+                                                                <option value="NA" selected>NA</option>
+                                                            </select>
+                                                        </div>
+                                                        <label class="col-md-3 control-label">Remark</label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" class="form-control" name="remark" placeholder="Remark" />
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <input type="hidden" class="form-control" name="doclist" placeholder="Doclist" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-md-6" id="card1">
+                                            <h4 style="text-align: center;">Task History</h4>
+                                            <!--   <div  class="content" id="content"> -->
+                                            <% if( taskh.length >0 ){ %>
+                                                <div style="max-height: 800px; overflow: auto;">
+                                                    <ul id="hist_list" class="timeline">
+                                                        <%
+                            taskh.forEach (function(srvreq){
+                            %>
+                                                            <li>
+                                                                <!-- begin timeline-time -->
+                                                                <div class="timeline-time">
+                                                                    <span class="date"><small><%=new Date(srvreq.dategen).toISOString().slice(0,10).replace('T',' ').toString(); %></small></span>
+                                                                </div>
+                                                                <!-- end timeline-time -->
+                                                                <!-- begin timeline-icon -->
+                                                                <div class="timeline-icon">
+                                                                    <a href="javascript:;"><i class="fa fa-paper-plane"></i></a>
+                                                                </div>
+                                                                <!-- end timeline-icon -->
+                                                                <!-- begin timeline-body -->
+                                                                <div class="timeline-body">
+                                                                    <div class="timeline-header">
+                                                                        <!-- 
+                                        <span class="userimage"><img src="assets/img/user.png" alt="" /></span> -->
+                                                                        <strong> Assignto : </strong><span class="username"><%- srvreq.assignto%><small></small></span>
+                                                                        <p><strong>Assigned by:</strong>
+                                                                            <%- srvreq.assignby%>
+                                                                        </p>
+                                                                        <!--  <span class="pull-right text-muted">18 Views</span> -->
+                                                                    </div>
+                                                                    <div class="timeline-content">
+
+                                                                        
+                                                                        
+                                                                        <p><strong>Status:</strong>
+                                                                            <%- srvreq.taskstatus%>
+                                                                        </p>
+
+                                                                        <p><strong>Due date:</strong>
+                                                                            <%- srvreq.due_date%>
+                                                                        </p>
+                                                                        
+                                                                        <p><strong>Notes:</strong>
+                                                                            <%- srvreq.TaskNotes%>
+                                                                        </p>
+                                                                    </div>
+
+                                                                </div>
+                                                                <!-- end timeline-body -->
+                                                            </li>
+                                                            <%   }); %>
+                                                                <li>
+                                                                    <!-- begin timeline-icon -->
+                                                                    <div class="timeline-icon">
+                                                                        <a href="javascript:;"><i class="fa fa-stop"></i></a>
+                                                                    </div>
+                                                                    <!-- end timeline-icon -->
+                                                                    <!-- begin timeline-body -->
+                                                                    <!--    <div class="timeline-body">
+                 </div> -->
+                                                                    <!-- begin timeline-body -->
+                                                                </li>
+                                                    </ul>
+                                                </div>
+                                                <% }%>
+                                                    <!-- end timeline -->
+                                                    <!--  </div> -->
+
+                                        </div>
+
+                                    </div>
+                                    <!-- end col-6 -->
+
+                                </div>
+                                <!-- end row -->
+
+                                <!-- end wizard step-1 -->
+                                <!-- begin wizard step-2 -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end panel -->
+                </div>
+                <!-- end col-12 -->
+        </div>
+        <!-- end row -->
+
+        <!-- end #content -->
+
+        <!-- begin theme-panel -->
+
+        <!-- end theme-panel -->
+
+        <!-- begin scroll to top btn -->
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+        <!-- end scroll to top btn -->
+        <!-- end page container -->
+
+        <!-- ================== BEGIN BASE JS ================== -->
+        <%- include lib/apicalf02 %>
+            <!-- ================== END BASE JS ================== -->
+            <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+            <script src="assets/js/form-wizards.demo.min.js"></script>
+            <!-- ================== END PAGE LEVEL JS ================== -->
+
+            <script>
+                $(document).ready(function() {
+                    App.init();
+                    //  init();  
+
+                    $(window).load(function(e) {
+                        //                        alert("called");
+                        var parsed = <%- tasks %>;
+                        //                        alert(JSON.stringify(parsed));
+
+                        $("input[name='taskid']").val(parsed["tasksrno"]);
+                        $("input[name='taskname']").val(parsed["taskname"]);
+                        $("input[name='doclist']").val(parsed["task_docs"]);
+                        $("input[name='esthours']").val(parsed["estimatehr"]);
+                        $("input[name='prjname']").val(parsed["prjid"]);
+                        $("input[name='prjid']").val(parsed["prjname"]);
+                        $("textarea[name='taskdesc']").val(parsed["taskDescription"]);
+
+                        if (parsed["due_date"]) {
+                            $("input[name='duedate']").val(parsed["due_date"]);
+                            $("input[name='duedate']").attr('readonly', 'readonly');
+                        }
+                    });
+
+                });
+            </script>
+
+            <script>
+                function onSubmit() {
+
+                    /*    var scrno = '555';*/
+                    var form = $('#formf');
+                    form.parsley().validate();
+                    //                    alert("funcntion called");
+                    if (form.parsley().isValid()) {
+                        //                            alert('valid');
+                        $ //("select[name='prjname']").removeAttr('disabled');
+                        var formdata = $('#formf').serializeArray();
+                        //$("select[name='prjname']").attr('disabled', 'disabled');
+
+                        //structure json
+                        var data = formdata.reduce(function(a, x) {
+                            a[x.name] = x.value;
+                            return a;
+                        }, {});
+
+                        var multia=$("#assignlist").val();
+                            if(multia !=null){
+                                data["assignto"]=multia.toString();
+                            }else{
+                                data["assignto"]='';  
+                            }
+                        Screenfields.push(data);
+                        //                        alert(JSON.stringify(Screenfields));
+                        $.ajax({
+                            type: "POST",
+                            url: "/updatetask",
+                            timeout: 2000,
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                formdata: JSON.stringify(Screenfields)
+                            }),
+                            success: function(data) {
+                                var fdata = JSON.parse(JSON.stringify(data));
+                                if (fdata.status == '0') {
+                                    Screenfields = [];
+                                    alert("Data saved successfully");
+                                    //                                    window.location.reload();
+                                    window.location.href = '/calendar';
+                                } else {
+                                    alert(fdata.status_msg);
+                                    Screenfields = [];
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                //                        alert(status+" "+error.Message+" "+xhr.responseText);
+                                alert("Please select the proper details");
+                                Screenfields = [];
+                            }
+
+                        });
+                    } else {
+                        //                        alert('Form not valid');
+                    }
+                };
+            </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<%- include lib/apicalh01 %>
+
+<!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
+<link href="assets/plugins/fullcalendar/fullcalendar.print.css" rel="stylesheet" media='print' />
+<link href="assets/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+<!-- ================== END PAGE LEVEL STYLE ================== -->
+
+<style type="text/css">
+.massive-font{
+	font-size: 15px;
+	color:black;
+	text-align: left;
+	white-space: nowrap;
+}
+.progress{
+	height:30px;
+}
+
+.prjlist {
+	max-height: 400px;
+	overflow: auto; 
+	padding: 0 5px 0 10px    
+}
+.element {
+	position: relative;
+	top: 50%;
+	transform: translateY(-10%);
+}
+</style>
+
+<body>
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+	
+	<!-- begin #page-container -->
+	<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+		<%- include lib/apicalh02 %>
+		<!-- begin #content -->
+		<div id="content" class="content">
+			<!-- begin row -->
+			<div class="row">
+				<!-- begin col-3 -->
+				<div class="col-md-4 col-sm-6"  >
+					<div class="widget widget-stats bg-green">
+						<div class="stats-icon stats-icon-lg"><i class="fa fa-tasks fa-fw"></i></div>
+						<div class="stats-title">NO. OF PROJECTS</div>
+						<div class="stats-number"><%= kpis.tproj %></div>
+						<div class="stats-desc"></div>
+					</div>
+				</div>
+				<!-- end col-3 -->
+				<!-- begin col-3 -->
+				<div class="col-md-4 col-sm-6" >
+					<div class="widget widget-stats bg-blue">
+						<div class="stats-icon stats-icon-lg"><i class="fa fa-percent fa-fw"></i></div>
+						<div class="stats-title">PROJECT OVERVIEW</div>
+						<div class="stats-number"><% if(kpis.poverview){  %>    <%= kpis.poverview %><% }else{ %>&nbsp;<%}%>  </div>
+						<div class="stats-desc"></div>
+					</div>
+				</div>
+				
+				<!-- end col-3 -->
+				<!-- begin col-3 -->
+				<div class="col-md-4 col-sm-6">
+					<div class="widget widget-stats bg-purple">
+						<div class="stats-icon stats-icon-lg"><i class="fa fa-clock-o fa-fw"></i></div>
+						<div class="stats-title">MY PENDING TASKS</div>
+						<div class="stats-number"><%= kpis.ptasks %></div>
+						<div class="stats-desc"></div>
+					</div>
+				</div>
+				<!-- end col-3 -->
+				<!-- begin col-4 -->
+				<!-- only manager -->			
+
+			</div>
+			<!-- end row -->
+
+			<div class="row">
+				<!-- begin panel -->
+				<div class="panel panel-inverse">
+					<div class="panel-heading">
+						<div class="panel-heading-btn element">
+							<% if (action.adhoc == 1){%>	<a class="btn btn-success btn-icon btn-circle"  onclick="location.href='/task_creation'" id="btnShow"><i class="fa fa-plus fa-1x"></i></a> <%}%>
+						</div> 
+						<h4 class="panel-title">Dashboard</h4>
+					</div>
+					<div class="panel-body p-0">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-4">
+									<h4>Project Status</h4>
+
+									<div class="prjlist">
+										<%
+										if(projects){
+										for (var j = 0; j < projects.length; j++){
+										var project = projects[j];
+										var classvalue = "progress-bar-success";
+										if(project.due && project.due == 1){
+
+										classvalue = "progress-bar-danger";
+									}
+									else if (project.percentage == "100.0%"){
+									classvalue = "progress-bar-success";
+								}
+								else{
+								classvalue = "progress-bar-info";
+							}	
+							%>
+							<div class="progress progress-striped active showtask hover" id="<%= project.id %>" action="<%- action %>" >
+								<div class="progress-bar <%- classvalue %>  massive-font" style="width: <%= project.percentage %>"><%= project.name %></div>
+							</div>
+							<% };
+						}            
+						%>
+					</div>
+				</div>	
+				<div class="col-md-8">
+					<div class="vertical-box">
+
+						<div id="calendar" class="vertical-box-column p-15 calendar" ></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<!-- end panel -->
+</div>
+</div>
+<!-- end #content -->
+
+<!-- begin scroll to top btn -->
+<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+<!-- end scroll to top btn -->
+</div>
+<!-- end page container -->
+
+<!-- ================== BEGIN BASE JS ================== -->
+<%- include lib/apicalf02 %>
+<!-- ================== END BASE JS ================== -->
+
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<script src="assets/plugins/fullcalendar/fullcalendar.min.js"></script>
+<script src="assets/js/apical/calendar.demo.js"></script>
+<!-- ================== END PAGE LEVEL JS ================== -->
+
+<script>
+	$(document).ready(function() {
+		App.init();
+		Calendar.init();
+	});
+
+
+	$(".showtask").click(function(event){
+		var action=$(this).attr('action');
+		// if(action && action == 1){
+			var id=$(this).attr('id');
+			var form = $(document.createElement('form'));
+			$(form).attr("action", "/filterlist");
+			$(form).attr("method", "POST");
+			var input = $("<input>")
+			.attr("type", "hidden")
+			.attr("name", "prjid")
+			.val(id);
+			$(form).append($(input));
+			form.appendTo( document.body )
+			$(form).submit();
+		// }
+	});
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<%- include lib/apicalh01 %>
+<% var pagename = "Lead list";%>
+<script type="text/javascript">
+	var Screenfields=[];
+	var currentcount=0;
+	var selectedIds=[];
+	var groupcount=1;
+</script>
+
+<style type="text/css">
+input,textarea,select,.multipleSelect,.selectpicker,.datepicker{
+	margin:5px 0 5px 0;
+}
+.element {
+	position: relative;
+	top: 50%;
+	transform: translateY(-10%);
+}
+</style>
+<body>
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+	
+	<!-- begin #page-container -->
+	<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+		<%- include lib/apicalh02 %>
+
+
+		<!-- begin #content -->
+		<div id="content" class="content">
+			<!-- begin page-header -->
+			<!-- <h6 class="page-header">Lead List</h6> -->
+			<!-- end page-header -->
+
+			<!-- begin row -->
+			<div class="row">
+				<!-- begin col-12 -->
+				<div class="col-md-12">
+					<!-- begin panel -->
+					<div class="panel panel-inverse">
+						<div class="panel-heading">
+							<div class="panel-heading-btn element">
+								  <a data-toggle="modal" href="#modal-dialog1" class="btn btn-success btn-icon btn-circle"><i class="fa fa-plus fa-1x"></i></a>
+							</div>
+							<h4 class="panel-title"><%= pagename %></h4>
+						</div>
+						<div class="panel-body">
+							<div>
+								<!-- begin row -->
+								<div class="row">
+									<!-- begin col-4 -->
+									<div class="panel-body">
+										<table id="data-table1" class="table table-striped table-bordered">
+											<thead>
+												<tr>
+													<th>Lead Name</th>
+													<th>Number</th>
+													<th>Email</th>
+													<th>Stage</th>
+													<th>Assign To</th>
+												</tr>
+											</thead>
+											<tbody>
+ 												<% 
+                                                    for(var i=0;i< lists.length;i++){
+													var list= lists[i];		
+                                                %>
+                                                    <tr id="<%= list.leadid %>" class= "hover">
+
+                                                         <td>
+                                                            <%= list.leadname %>
+                                                        </td>
+
+                                                         <td>
+                                                            <%= list.contactno %>
+                                                        </td>
+                                                         <td>
+                                                            <%= list.emailid %>
+                                                        </td>
+                                                         <td>
+                                                            <%= list.stage %>
+                                                        </td>
+                                                         <td>
+                                                            <%= list.allocto %>
+                                                        </td>
+
+                                                    </tr>
+                                                    <% } %>
+
+											</tbody>
+
+										</table>
+
+										<div class="modal fade" id="modal-dialog1">
+											<div class="modal-dialog modal-lg">">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+														<h4 class="modal-title">Lead Creation</h4>
+													</div>
+													<div class="modal-body">
+														<div class="row">
+															<form action="/" method="POST" id="formf" data-parsley-validate="true">
+																<div class="row">
+																	<div class="col-md-6">
+
+																		<label class="col-md-3 control-label">Lead Name</label>
+																		<div class="col-md-9">
+																			<input type="text" class="form-control" name="lname" placeholder="Lead Name" required/>
+																		</div>
+
+                                                                        <label class="col-md-3 control-label">Email ID</label>
+																		<div class="col-md-9">
+																			<input id="email" type="email" class="form-control" name="emailid" placeholder="Email ID" required/>
+																		</div>
+
+                                                                        <label class="col-md-3 control-label">Contact Number</label>
+																		<div class="col-md-9">
+																			<input type="number" maxlength="13" minlength="6" class="form-control" placeholder="Contact Number" name="phone" data-parsley-type="digits" required="" required/>
+																		</div>
+
+																		<label class="col-md-3 control-label">Stage</label>
+																		<!-- begin col-6 -->
+																		<div class="col-md-9">
+																			<select class="form-control selectpicker" name="stage" api="v1/getstages" required>
+																				<option value="NA" selected>NA</option>                                             
+																			</select>
+																		</div>
+
+                                                                        <label class="col-md-3 control-label">Assign To</label>
+																		<div class="col-md-9">
+																			<select class="form-control selectpicker" name="assignto" api="v1/getsales" required>
+																				<option value="NA" selected>NA</option>                                             
+																			</select>
+																		</div>
+
+																		<label class="col-md-3 control-label">Address</label>
+																		<div class="col-md-9">
+																			<textarea class="form-control" rows="5" name="address"></textarea>
+																		</div>
+																	</div>
+																	<div class="col-md-6">
+																		<label class="col-md-3 control-label">Products</label>
+																		<!-- begin col-6 -->
+																		<div class="col-md-9">
+																			<select class="form-control multipleSelect" id="products" name="products" api="v1/getproducts" required multiple style="width: 100%" >
+																				<option value="NA" selected>NA</option>                                             
+																			</select>
+																		</div>
+																        			
+																		<label class="col-md-3 control-label">Company</label>
+																		<!-- begin col-6 -->
+																		<div class="col-md-9">
+																			<input type="text" class="form-control" name="company" placeholder="Company Name"/>
+																		</div>
+
+																		<label class="col-md-3 control-label">Next Meeting Date</label>
+																		<!-- begin col-6 -->
+																		<div class="col-md-9">
+																			<input type="text" class="form-control datepicker" name="nmd" placeholder="Next meet" required />
+																		</div>
+
+																		<label class="col-md-3 control-label">Reference Name</label>
+																		<!-- begin col-6 -->
+																		<div class="col-md-9">
+																			<input type="text" class="form-control" name="refname" placeholder="Reference Name"/>
+																		</div>
+
+																		<label class="col-md-3 control-label">Reference Number</label>
+																		<div class="col-md-9">
+																			<input type="number" maxlength="13" minlength="6" class="form-control" placeholder="Reference Number" name="refno" data-parsley-type="digits" />
+																		</div>
+                                                                        
+                                                                        <label class="col-md-3 control-label">Notes</label>
+																		<div class="col-md-9">
+																			<textarea class="form-control" rows="5" name="notes"></textarea>
+																		</div>
+																	</div>
+																</div>
+															</form>
+														</div>
+													</div>
+													<div class="modal-footer">
+														<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+														<a href="javascript:onValidate();" class="btn btn-sm btn-success">Save</a>
+													</div>    
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end col-4 -->
+
+								</div>
+								<!-- end row -->
+
+							</div>
+							<!-- end wizard step-1 -->
+						</div>
+
+					</div>
+				</div>
+				<!-- end panel -->
+			</div>
+			<!-- end col-12 -->
+		</div>
+		<!-- end row -->
+	</div>
+	<!-- end #content -->
+	<!-- <p class="text-center">
+                            &copy; Apical Innovations All Right Reserved 2017
+                        </p> -->
+                        <!-- begin scroll to top btn -->
+                        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+                        <!-- end scroll to top btn -->
+
+                        <!-- ================== BEGIN BASE JS ================== -->
+                        <%- include lib/apicalf02.ejs %>	
+                        <!-- ================== END BASE JS ================== -->
+
+                        <script>
+                        	$(document).ready(function() {
+                        		App.init();
+                        		/*$( ".datepicker").datepicker({   
+      todayHighlight: true,
+        autoclose: true});*/
+
+         var table =   $('#data-table1').DataTable({
+         	dom: 'lBfrtip',
+         	buttons: [
+         	{ extend: 'copy', className: 'btn-sm' },
+         	{ extend: 'csv', className: 'btn-sm' },
+         	{ extend: 'excel', className: 'btn-sm' },
+         	{ extend: 'pdf', className: 'btn-sm' },
+         	{ extend: 'print', className: 'btn-sm' }
+         	],
+         	responsive: true
+         });
+
+         $('#data-table1 tbody').on('click', 'tr', function () {
+         	var data1 = this.id;
+						 var form = $(document.createElement('form'));
+                                      $(form).attr("action", "/historydata");
+                                      $(form).attr("method", "POST");
+
+                                      var input = $("<input>")
+                                      .attr("type", "hidden")
+                                      .attr("name", "lval")
+                                      .val(data1);
+                                      $(form).append($(input));
+                                      form.appendTo( document.body )
+                                      $(form).submit();
+
+         });
+     });
+
+      </script>
+
+
+               <script>
+                   
+                $('#modal-dialog1').on('hidden.bs.modal', function () {
+                    // $('#formf').trigger("reset");
+                    $(this).find("input,textarea,select").val('').end();
+
+                       //reset multiselect
+                    $(".multipleselect").select2('destroy');
+                    $(".multipleSelect").select2();
+                    
+                    $('#formf').parsley().destroy();
+                    $('#formf').validate().resetForm();  
+                })
+               	function onValidate() {
+//                        alert("funcntion called");
+                     /*    var scrno = '555';*/
+                     var form = $('#formf');
+                     form.parsley().validate();
+                     if (form.parsley().isValid()) {
+//                            alert('valid');
+						var formdata = $('#formf').serializeArray();
+
+                            //structure json
+                            var data = formdata.reduce(function(a, x) {
+                            	a[x.name] = x.value;
+                            	return a;
+                            }, {});
+
+                               var multi=$(".multipleSelect").val();
+                            if(multi !=null){
+                                data["products"]=multi.toString();
+                            }else{
+                                data["products"]='';  
+                            }
+                            Screenfields.push(data);
+
+//                            alert(JSON.stringify(Screenfields));
+                         $.ajax({
+                         	type: "POST",
+                         	url: "/savelead",
+                         	timeout: 2000,
+                         	contentType: 'application/json',
+                         	data: JSON.stringify({
+                         		formdata: JSON.stringify(Screenfields)
+                         	}),
+                         	success: function(data) {
+                         		var fdata = JSON.parse(JSON.stringify(data));
+                         		if (fdata.status == '0') {
+                         			Screenfields = [];
+                         			alert("Data saved successfully");
+                         			$('#formf').trigger("reset");
+                         			$('#modal-dialog1').modal('hide');
+                                    window.location.reload();
+                         		} else {
+                         			alert(fdata.status_msg);
+                         			Screenfields = [];
+                         		}
+                         	}
+
+                         });
+                     } else {
+//                     	alert(' not valid');
+                     }
+                 };
+             </script>
+
+         </body>
+         </html>

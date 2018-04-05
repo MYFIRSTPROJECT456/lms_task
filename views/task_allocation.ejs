@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<%- include lib/apicalh01 %>
+
+    <style type="text/css">
+        input,
+        textarea,
+        select {
+            margin: 0 0 10px 0;
+        }
+        .element {
+            position: relative;
+            top: 50%;
+            transform: translateY(-10%);
+        }
+    </style>
+ <script>
+        var taskid = "";
+        var Screenfields = [];
+    </script>
+    <body>
+        <!-- begin #page-loader -->
+        <div id="page-loader" class="fade in"><span class="spinner"></span></div>
+        <!-- end #page-loader -->
+
+        <!-- begin #page-container -->
+        <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+            <!-- begin #header -->
+            <%- include lib/apicalh02 %>
+                <!-- end #sidebar -->
+
+                <!-- begin #content -->
+                <div id="content" class="content">
+                    <div class="row">
+                        <!-- begin col-10 -->
+                        <div class="col-md-12">
+                            <div class="panel panel-inverse">
+                                <div class="panel-heading">
+                                    <div class="panel-heading-btn element">
+                                        <a href="javascript:createdialog();" class="btn btn-success btn-icon btn-circle"><i class="fa fa-plus fa-1x"></i></a>
+                                       <!--  <a href="#" class="btn btn-xl btn-icon btn-circle btn-success"><i class="fa fa-save" ></i></a>
+                                       <a href="javascript:print();" class="btn btn-xl btn-icon btn-circle btn-success" id="print"><i class="fa fa-print" ></i></a>
+                                       <a href="javascript:reset();" class="btn btn-xl btn-icon btn-circle btn-success"><i class="fa fa-refresh" ></i></a> -->
+                                    </div>
+                                    <h4 class="panel-title">Task Allocation</h4>
+                                </div>
+                                <div class="panel-body">
+                                    <table id="data-table" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Project Name</th>
+                                                <th>Task defId</th>
+                                                <th>Task Name</th>
+                                                <th>Task Description</th>
+                                                <th>Estimated Hours</th>
+                                                <th>Assign to</th>
+                                                <th>Due date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <% 
+                                                    taskalloclist.forEach (function(task){               
+                                                %>
+                                                    <tr id="<%= task.tasksrno %>" class="hover">
+                                                        <td>
+                                                            <%= task.projectname %>
+                                                        </td>
+                                                        <td>
+                                                            <%= task.taskdefid %>
+                                                        </td>
+                                                        <td>
+                                                            <%= task.taskname %>
+                                                        </td>
+                                                        <td>
+                                                            <%= task.taskDescription %>
+                                                        </td>
+                                                        <td>
+                                                            <%= task.estimatehr %>
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <%= task.assignto %>
+                                                        </td>
+                                                        <td>
+                                                            <%= task.taskduedate %>
+                                                        </td>
+                                                    </tr>
+                                                    <% }); %>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end col-10 -->
+                    </div>
+                    <!-- end row -->
+
+                    <div class="modal fade" id="modal-dialog">
+                        <div class="modal-dialog ">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title">Add Task </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <!-- begin col-6 -->
+                                        <form action="/createtask" method="POST" id="frmUploader" enctype="multipart/form-data" data-parsley-validate="true">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-3 control-label">Project Name</label>
+                                                    <div class="col-md-9">
+                                                        <select class="form-control selectpicker" data-size="10" data-style="btn-white" name="prjname" api="v1/getprojects" required="" disabled="true">
+                                                                <option value="NA" selected>NA</option>                                             
+                                                        </select>
+                                                    </div>
+
+                                                     <div class="col-md-12">
+                                                        <input type="hidden" class="form-control" name="taskid" />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <input type="hidden" class="form-control" name="taskdefid" />
+                                                    </div>
+
+                                                    <label class="col-md-3 control-label">Task Name</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control" name="taskname" placeholder="Task Name" required="" readonly="" />
+                                                    </div>
+
+                                                    <label class="col-md-3 control-label">Task Description</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" name="taskdesc" placeholder="Task Description" required="" readonly=""></textarea>
+                                                    </div>
+
+                                                    <label class="col-md-3 control-label">Due Date</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control datepicker" name="duedate" placeholder="Due Date" disabled/>
+                                                    </div>
+                                                    
+                                                    <label class="col-md-3 control-label">Estimated Hours</label>
+                                                    <div class="col-md-9">
+                                                        <input type="number" class="form-control" min="0" maxlength="3" name="esthours" placeholder="Estimated Hours" required readonly/>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-12" >
+                                                        <input type="hidden" class="form-control" name="status" placeholder="Status" readonly/>
+                                                    </div>
+
+                                                    <label class="col-md-3 control-label">Assign To</label>
+                                                    <div class="col-md-9"> 
+                                                        <select class="form-control multipleSelect" name="assignto" api="v1/getassignto" placeholder="Select Assign" id="assignlist" multiple style="width: 100%" required>
+                                                        <option value="NA" selected>NA</option>
+                                                    </div>
+                                                     <div id="empty_div" style="height:10px" class="col-md-12 ">
+                                                        <label class="col-md-4 "></label>
+                                                    </div>
+                                                    <label class="col-md-3 control-label">Document List</label>
+                                                    <div class="col-md-9">
+                                                        <select class="form-control multipleSelect" name="doclist" api="v1/getdoclist" id="doclist" multiple style="width: 100%">
+                                                        <option value="NA" selected>NA</option>   
+                                                      </select>
+                                                    </div>
+                                                    <div id="empty_div" style="height:10px" class="col-md-12 "></div>
+                                                    <label class="col-md-3">Images </label>
+                                                    <div class="col-md-9">
+                                                        <input type="file" name="imgUploader" id="image" accept="image/*,.pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" multiple />
+                                                        <p><small>(Maximum 5 images)</small></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <!-- end col-6 -->
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+                                    <a href="javascript:onSelect();" class="btn btn-sm btn-success">Done</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end #content -->
+
+                <!-- begin theme-panel -->
+
+                <!-- end theme-panel -->
+
+                <!-- begin scroll to top btn -->
+                <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+                <!-- end scroll to top btn -->
+        </div>
+        <!-- end page container -->
+
+        <!-- ================== BEGIN BASE JS ================== -->
+        <%- include lib/apicalf02 %>
+            <!-- ================== END BASE JS ================== -->
+
+            <!-- ================== BEGIN PAGE LEVEL JS ================== -->            
+            <!-- ================== END PAGE LEVEL JS ================== -->
+
+            <script>
+                $(document).ready(function() {
+                    App.init();
+//                    TableManageCombine.init();
+                });
+
+                
+                var table = $('#data-table').DataTable({
+                    dom: 'lBfrtip',
+                        buttons: [
+                                { extend: 'copy', className: 'btn-sm' },
+                                { extend: 'csv', className: 'btn-sm' },
+                                { extend: 'excel', className: 'btn-sm' },
+                                { extend: 'pdf', className: 'btn-sm' },
+                                { extend: 'print', className: 'btn-sm' }
+                        ],
+                    responsive: true
+                });
+                $('#data-table tbody').on('click', 'tr', function() {
+                    var data = table.row(this).id();
+                    taskid = data;
+            //        alert("edit task"+ data);
+                     if(taskid){
+                        $('#modal-dialog').modal('show');
+                     }
+                });
+                
+                function createdialog() {
+                    taskid = "";
+//                    alert("dialog show "+taskid);
+                    $('#modal-dialog').modal('show');
+                }
+                
+                $('#modal-dialog').on('hidden.bs.modal', function () {
+                    // $('#formf').trigger("reset");
+                    $(this).find("input,textarea,select").val('').end();
+                    
+                    //reset multiselect
+                    $(".multipleselect").select2('destroy');
+                    $(".multipleSelect").select2();
+                    
+                    $('#formf').parsley().destroy();
+                    $('#formf').validate().resetForm();  
+                })
+                
+                
+                $('#modal-dialog').on('show.bs.modal', function(e) {
+                    var modal = $(this);
+                    if (taskid !== "") {
+                        modal.find('.modal-title').text('Assign Task');
+                        $.ajax({
+                            type: "POST",
+                            url: "/gettaskdetails",
+                            timeout: 6000,
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                taskid: taskid
+                            }),
+                            success: function(response) {
+                                var parsed = JSON.parse(JSON.stringify(response))[0];
+                                $(e.currentTarget).find("input[name='taskid']").val(parsed["tasksrno"]);
+                                $(e.currentTarget).find("input[name='taskname']").val(parsed["taskname"]);
+//                                $(e.currentTarget).find("input[name='doclist']").val(parsed["task_docs"]);
+                                 $(e.currentTarget).find("input[name='taskdefid']").val(parsed["taskdefid"]);
+                                $(e.currentTarget).find("input[name='esthours']").val(parsed["estimatehr"]);
+                                $(e.currentTarget).find("textarea[name='taskdesc']").val(parsed["taskDescription"]);
+                                $("select[name='prjname'] option[value='" + parsed["prjid"] + "']").attr('selected', 'selected');
+                                $(e.currentTarget).find("input[name='duedate']").val(parsed["due_date"]);
+                              /*   $("select[name='assignto'] option[value='" + parsed["assignto"] + "']").attr('selected', 'selected');*/
+                                $(e.currentTarget).find("input[name='status']").val(parsed["taskstatus"]);
+                                
+                                
+                                
+                                // populate multiselect data
+                                var data = parsed["task_docs"];
+                                var valArr=data.split(",");
+                                $("#doclist").val(valArr).trigger('change');
+
+                                var data = parsed["assignto"];
+                                var valArr=data.split(",");
+                                $("#assignlist").val(valArr).trigger('change');
+                                
+                                $(e.currentTarget).find("input[name='taskname']").attr('readOnly',true);
+                                $(e.currentTarget).find("input[name='esthours']").attr('readOnly',true);
+                                $(e.currentTarget).find("textarea[name='taskdesc']").attr('readOnly',true);
+                                $(e.currentTarget).find("input[name='taskname']").attr('readOnly',true);
+                                $("input[name='duedate']").prop('disabled', true);
+                                $("select[name='prjname']").prop('disabled', true);
+                                
+                            },
+                            error:function(xhr, status,error){
+                                alert(status+" "+error.Message+" "+xhr.responseText); 
+                            } 
+                        });
+                    }else{
+                        modal.find('.modal-title').text('Add Task');
+                        $(e.currentTarget).find("input[name='taskname']").attr('readOnly',false);
+                        $(e.currentTarget).find("input[name='esthours']").attr('readOnly',false);
+                        $(e.currentTarget).find("textarea[name='taskdesc']").attr('readOnly',false);
+                        $(e.currentTarget).find("input[name='taskname']").attr('readOnly',false);
+                        $("input[name='duedate']").prop('disabled', true);
+                        $("input[name='duedate']").removeAttr('disabled');
+                        $("select[name='prjname']").prop('disabled', false);
+                        $("select[name='prjname']").removeAttr('disabled');
+                    }
+                });
+
+
+                function onSubmit() {
+                      //  alert("funcntion called");
+                      /*    var scrno = '555';*/
+                      var form = $('#formf');
+
+                        $("select[name='prjname']").prop('disabled', false);
+                        $("select[name='prjname']").removeAttr('disabled');
+
+                        $("input[name='duedate']").prop('disabled', false);
+                        $("input[name='duedate']").removeAttr('disabled');
+                      form.parsley().validate();
+                      if (form.parsley().isValid()) {
+//                            alert('valid');
+                    var formdata = $('#formf').serializeArray();
+
+                            //structure json
+                            var data = formdata.reduce(function(a, x) {
+                              a[x.name] = x.value;
+                              return a;
+                            }, {});
+
+                             var multi=$("#doclist").val();
+                            if(multi !=null){
+                                data["doclist"]=multi.toString();
+                            }else{
+                                data["doclist"]='';  
+                            }
+                            var multia=$("#assignlist").val();
+                            if(multia !=null){
+                                data["assignto"]=multia.toString();
+                            }else{
+                                data["assignto"]='';  
+                            }
+
+                            Screenfields.push(data);
+                          //  alert(JSON.stringify(Screenfields));
+                          var url = "/createtask";
+                          
+                          if(taskid != "")
+                            {
+                                url = "/taskasign";
+                            }
+                          $.ajax({
+                            type: "POST",
+                            url: url,
+                            timeout: 2000,
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                 formdata: JSON.stringify(Screenfields)
+                            }),
+                            success: function(data) {
+                              var fdata = JSON.parse(JSON.stringify(data));
+                              if (fdata.status == '0') {
+                                Screenfields = [];
+                                alert("Data saved successfully");
+                                location.reload();
+                              } else {
+                                    // alert(fdata.status_msg);
+                                    alert("Please select the proper details");
+                                    Screenfields = [];
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                //                        alert(status+" "+error.Message+" "+xhr.responseText);
+                                alert("Please select the proper details");
+                                Screenfields = [];
+                            }
+
+                         });
+                        } else {
+//                          alert('Form not valid');
+                        }
+                      };
+            function onSelect(){
+                alert('1');
+                if($("#image")[0].files.length > 5) {
+                    alert("You can select only 5 files");
+                      $("#image").val("");
+                } else {
+                    alert('2');
+                    var form = $('#frmUploader');
+                    form.parsley().validate();
+                    if (form.parsley().isValid()) {
+                        sendmulti();
+                    }
+                }               
+            }
+
+            $('#modal-dialog').on('hidden.bs.modal', function () {
+                
+                $(this).find("input,textarea,select").val('').end();
+                    $('#frmUploader').parsley().destroy();
+                    $('#frmUploader').validate().resetForm();
+            })
+
+            function sendmulti(){
+                alert('3');
+                var form = new FormData($("#frmUploader")[0]);
+                alert(JSON.stringify(form));
+                $.ajax({
+                        url: "/createtask",
+                        method: "POST",
+                        data: form,
+                        processData: false,
+                        contentType: false,
+                        success: function(result){
+                            var response = JSON.parse(JSON.stringify(result));
+                            // alert(response.insertId);
+                            $('#modal-dialog').modal('hide');
+                            alert("Ticket ID generated");
+                            window.location.reload();
+                        },
+                        error: function(er){
+                            alert("Please enter valid details");
+                        }
+                });
+            }
+
+            </script>
+    </body>
+
+</html>

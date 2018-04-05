@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<%- include lib/apicalh01 %>
+<% var pagename="Lead Approval and history" %>
+<!--   <link href="assets/css/bootstrap-responsive.min.css" rel="stylesheet"> -->
+
+<script type="text/javascript">
+    var History=[];
+    var Screenfields = [];
+       var api="";
+</script>
+<style>
+    p {
+        margin: 0 0 5px 0;
+    }
+    
+    .form-group {
+        margin-bottom: 0;
+    }
+    
+    .vertical-menu {
+        width: 250px;
+        height: 300px;
+        overflow-y: auto;
+    }
+    
+    .vertical-menu a {
+        background-color: #eee;
+        color: black;
+        display: block;
+        padding: 12px;
+        text-decoration: none;
+    }
+    
+    .vertical-menu a:hover {
+        background-color: #ccc;
+    }
+    
+    .vertical-menu a.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .card {
+        /*border: 0.1px solid #a1a1a1;*/
+        padding: 10px 10px;
+        background: #FDFEFE;
+        width: 90%;
+        border-radius: 3px;
+        margin: 0 0 5px 0;
+    }
+    
+    .card1 {
+        border: 1px solid #a1a1a1;
+        padding: 10px 10px;
+        /* background: #dddddd;*/
+        width: 90%;
+        border-radius: 3px;
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    #myInput {
+        background-image: url('searchblack.png');
+        /*                background-position: 10px 12px;*/
+        background-repeat: no-repeat;
+        width: 100%;
+        font-size: 16px;
+        padding: 8px 20px 8px 40px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+    }
+    
+    #myUL {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    #myUL li a {
+        border: 1px solid #ddd;
+        margin-top: -1px;
+        /* Prevent double borders */
+        background-color: #f6f6f6;
+        padding: 12px;
+        text-decoration: none;
+        font-size: 12px;
+        color: black;
+        display: block
+    }
+    
+    #myUL li a.header {
+        background-color: #e2e2e2;
+        cursor: default;
+    }
+    
+    #myUL li a:hover:not(.header) {
+        background-color: #eee;
+    }
+    
+    nav ul {
+        height: 450px;
+    }
+    
+    nav ul {
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+</style>
+
+<body>
+    <!-- begin #page-loader -->
+    <div id="page-loader" class="fade in"><span class="spinner"></span></div>
+    <!-- end #page-loader -->
+
+    <!-- begin #page-container -->
+    <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+        <%- include lib/apicalh02 %>
+      
+      <!-- begin #content -->
+      <div id="content" class="content">
+
+        <!-- end breadcrumb -->
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <div class="panel-heading-btn">
+                </div>
+                <h4 class="panel-title"><%=pagename %></h4>
+
+            </div>
+            <div class="panel-body" style="background-color: #ededed">
+
+                <div class="row">
+                    <div class="col-md-5">
+                          <form class="form-horizontal" action="/" method="POST" id="forms">
+                        <table class="table table-profile">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>
+                                                <h4><%=f.leadname %></h4>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr class="highlight">
+                                            <td>Created On: </td>
+                                            <td><%=f.date_gen %></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field">Email</td>
+                                            <td><%=f.emailid %></td>
+                                        </tr>
+
+					                    <tr>
+                                            <td class="field">Contact number</td>
+                                            <td><i class="fa fa-mobile fa-lg m-r-5"></i>
+                                            <%=f.contactno %></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="field">Company</td>
+                                            <td><%=f.company %></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field">Address</td>
+                                            <td><%=f.Address %></td>
+                                        </tr>
+                                        <tr class="divider">
+                                            <td colspan="2"></td>
+                                        </tr>
+                                       
+                                        <tr>
+                                            <td class="field">Assigned To</td>
+                                            <td><%=f.allocto %></td>
+                                        </tr>
+                                       
+                                         <tr>
+                                            <td class="field">product</td>
+                                            <td><%=f.products %></td>
+                                        </tr>
+                                        
+                                        <tr class="divider">
+                                            <td colspan="2"></td>
+                                        </tr>
+                                         <tr>
+                                            <td class="field">Reference name</td>
+                                            <td><%=f.refname %></td>
+                                        </tr>
+                                         <tr>
+                                            <td class="field">Reference number</td>
+                                            <td><%=f.refnumber %></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field">TAT</td>
+                                            <td><input type="text" class="form-control" name="tat" placeholder="TAT" required /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field">Comments</td>
+                                            <td> <textarea class="form-control" rows="5" name="comments"></textarea></td>
+                                        </tr>
+                                         <tr>
+                                            <td class="field">Due Date</td>
+                                            <td> <input type="text" class="form-control datepicker" name="duedate" placeholder="Due Date" required /></td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </form>
+                            <div style="text-align: center;">
+                                 <a href="javascript:onApprove();" class="btn btn-sm btn-danger" style="display: inline-block; margin-right: 30px" >Reject</a>
+                         <a href="javascript:onReject();" class="btn btn-sm btn-success" style="display: inline-block;">Approve</a>
+                            </div>
+                    </div>
+
+                    <div class="col-md-7" id="card1">
+                  
+                        <h4 style="text-align: center;">Lead History</h4>
+                        <!--   <div  class="content" id="content"> -->
+                       <% if( f.history.length >0 ){ %>
+			   <div    style="max-height: 400px; overflow: auto;">
+                        <ul id="hist_list" class="timeline">
+                            <%
+                            f.history.forEach (function(srvreq){
+                            %>
+                            <li>
+                                <!-- begin timeline-time -->
+                                <div class="timeline-time">
+                               <span class="date"><small><%=srvreq.date_gen %></small></span>
+                                </div>
+                                <!-- end timeline-time -->
+                                <!-- begin timeline-icon -->
+                                <div class="timeline-icon">
+                                    <a href="javascript:;"><i class="fa fa-paper-plane"></i></a>
+                                </div>
+                                <!-- end timeline-icon -->
+                                <!-- begin timeline-body -->
+                                <div class="timeline-body">
+                                    <div class="timeline-header"><!-- 
+                                        <span class="userimage"><img src="assets/img/user.png" alt="" /></span> -->
+                                       <strong> Met by : </strong><span class="username"><%=srvreq.metby %><small></small></span>
+                                        <!--  <span class="pull-right text-muted">18 Views</span> -->
+                                    </div>
+                                    <div class="timeline-content">
+
+                                        <p><strong>Communication Comment:</strong>
+                                            <%=srvreq.remarks %>
+                                        </p>
+                                       
+                                        <p><strong>Stage:</strong>
+                                            <%=srvreq.stage %>
+                                        </p>
+                                          <p><strong>Next meet:</strong>
+                                            <%=srvreq.nmd %>
+                                        </p>
+                                     
+                                    </div>
+
+                                </div>
+                                <!-- end timeline-body -->
+                            </li>
+                            <%   }); %>
+                                 <li>
+                    <!-- begin timeline-icon -->
+                    <div class="timeline-icon">
+                        <a href="javascript:;"><i class="fa fa-stop"></i></a>
+                    </div>
+                    <!-- end timeline-icon -->
+                    <!-- begin timeline-body -->
+                 <!--    <div class="timeline-body">
+                 </div> -->
+                    <!-- begin timeline-body -->
+                </li>
+                        </ul>
+			</div>
+                        <% }%>
+                        <!-- end timeline -->
+                        <!--  </div> -->
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+                    <!--  <p class="text-center">
+                            &copy; Apical Innovations All Right Reserved 2017
+                        </p> -->
+                        <!-- end #content -->
+                        <!-- begin scroll to top btn -->
+                        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+                        <!-- end scroll to top btn -->
+                    </div>
+                    <!-- end page container -->
+                    <!-- ================== BEGIN BASE JS ================== -->
+                    <%- include lib/apicalf02.ejs %>
+                    <!-- ================== END BASE JS ================== -->
+
+                    <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+                    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+                    <script src="assets/js/timeline.demo.min.js"></script>
+      
+                    <!-- ================== END PAGE LEVEL JS ================== -->
+                    <script type="text/javascript" src="assets/js/intro.js"></script>
+
+                    <script>
+                        $(document).ready(function() {
+                            App.init();
+                    });
+                </script>
+
+                <script type="text/javascript">
+
+                function onApprove(){
+                    perform(1);
+                }
+
+                function onReject(){
+                    perform(0);
+                }
+                        function perform(key) {
+                            api="";
+                         if(key == 0){
+                            api += "/approvelead";
+                         }else{
+                            api += "/rejectlead";
+                         }       
+
+                        // var scrno = 564;
+                        var form = $('#forms');
+                          var formdata = $('#forms').serializeArray();
+                            var data = formdata.reduce(function(a, x) {
+                              a[x.name] = x.value;
+                              return a;
+                            }, {});
+                            Screenfields.push(data);
+                        //    alert("before ajax"+api);
+                            $.ajax({
+                              type: "POST",
+                              url: ""+api,
+                              timeout: 6000,
+                              contentType: 'application/json',
+                              data: JSON.stringify({
+                                lid: <%=lid %>,
+                                sanctionid: <%= sanctionid %>,
+                                formdata: JSON.stringify(Screenfields),
+                                leaddata: JSON.stringify(<%- leaddata %>)
+                              }),
+                              success: function(data) {
+                                var fdata = JSON.parse(JSON.stringify(data));
+                                if (fdata.status == '0') {
+                                  Screenfields = [];
+                                  alert("Data saved successfully");
+                                  window.location.href = '/calendar';
+                                } else {
+                                  alert('Failed to save');
+                                  Screenfields = [];
+                                }
+                              }
+
+                            });
+                          
+                        };
+
+                      
+                </script>
+                
+         </body>
+
+         </html>

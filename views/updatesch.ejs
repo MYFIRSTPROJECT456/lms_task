@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<%- include lib/apicalh01 %>
+<% var pagename="Update and Schedule" %>
+<!-- ================== END BASE CSS STYLE ================== -->
+<script type="text/javascript">
+    var Screenfields = [];
+    var Screenfields1 = [];
+    var currentcount = 0;
+    var selectedIds = [];
+    var groupcount = 1;
+    var select = true;
+</script>
+
+<style type="text/css">
+.bottom-right: {
+    position: absolute;
+    right: 20;
+    bottom: 20;
+}
+
+input,
+textarea,
+select,
+.multipleSelect,
+.selectpicker,
+.datepicker {
+    margin: 0 0 10px 0;
+}
+</style>
+
+<body>
+    <!-- begin #page-loader -->
+    <div id="page-loader" class="fade in"><span class="spinner"></span></div>
+    <!-- end #page-loader -->
+
+    <!-- begin #page-container -->
+    <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+        <%- include lib/apicalh02 %>
+
+        <!-- begin #content -->
+        <div id="content" class="content">
+
+            <!-- begin page-header -->
+
+            <!-- end page-header -->
+            <div class="col-md-6">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            <a href="javascript:onUpdate();" class="btn btn-xl btn-icon btn-circle btn-success"><i class="fa fa-save" ></i></a>
+                        </div>
+                        <h4 class="panel-title">Lead Update</h4>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="form-horizontal" action="/" method="POST" id="mainform" data-parsley-validate="true">
+                                    <div style="margin-top: 2.4%">
+                                        <div class="row">
+                                            <label class="col-md-3 control-label">Lead Name</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="lname" placeholder="Lead Name" required/>
+                                            </div>
+
+                                            <label class="col-md-3 control-label">Email ID</label>
+                                            <div class="col-md-9">
+                                                <input id="email" type="email" class="form-control" name="emailid" placeholder="Email ID" required/>
+                                            </div>
+
+                                            <label class="col-md-3 control-label">Contact Number</label>
+                                            <div class="col-md-9">
+                                                <input type="text" maxlength="13" minlength="6" class="form-control" placeholder="Contact Number" name="phone" data-parsley-type="digits" required="" required/>
+                                            </div>
+
+                                            <label class="col-md-3 control-label">Address</label>
+                                            <div class="col-md-9">
+                                                <textarea class="form-control" rows="5" name="address"></textarea>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- start updatedata -->
+
+            <div class="col-md-6">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            <a href="javascript:onResch();" class="btn btn-xl btn-icon btn-circle btn-success"><i class="fa fa-save" ></i></a>
+                        </div>
+                        <h4 class="panel-title">Lead Reporting</h4>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="form-horizontal" action="/" method="POST" id="form1" data-parsley-validate="true">
+                                    <div class="col-md-12">
+
+                                        <label class="control-label">Remarks:</label>
+                                        <div class="m-b-12">
+                                            <textarea class="textarea form-control" id="remarks" name="remarks" placeholder="Enter remarks" rows="5"></textarea>
+                                        </div>
+
+                                        <label class="control-label">Stage:</label>
+                                        <div class="m-b-12">
+                                            <select class="form-control col-md-5" name="stage" id="stage" api="v1/getstages">
+                                                <option value="NA">NA</option>
+                                            </select>
+                                        </div>
+
+                                        <label class="control-label">Next Meeting Date:</label>
+                                        <div class="m-b-12">
+                                            <input type="text" class="form-control datepicker" id="nmd" name="nmd" placeholder="Select Date" required />
+                                        </div>
+
+                                        <label class="control-label">Products</label>
+                                            <!-- begin col-6 -->
+                                            <div class="m-b-12">
+                                                <select class="form-control multipleSelect" name="products" api="v1/getproducts" required multiple style="width: 100%" >
+                                                    <option value="NA" selected>NA</option>
+                                                </select>
+                                            </div>
+
+                                        <label class="control-label">Reference Name</label>
+                                        <!-- begin col-6 -->
+                                        <div class="m-b-12">
+                                            <input type="text" class="form-control" name="refname" placeholder="Reference Name"/>
+                                        </div>
+
+                                        <label class="control-label">Reference Number</label>
+                                        <div class="m-b-12">
+                                            <input type="number" maxlength="13" minlength="6" class="form-control" placeholder="Reference Number" name="refno" data-parsley-type="digits" />
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- end updatedata -->
+
+        </div>
+        <!-- end #content -->
+        <!-- begin scroll to top btn -->
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+        <!-- end scroll to top btn -->
+    </div>
+    <!-- end page container -->
+    <!-- ================== BEGIN BASE JS ================== -->
+    <%- include lib/apicalf02.ejs %>
+    <!-- ================== END BASE JS ================== -->
+
+    <script>
+        $(document).ready(function() {
+            App.init();
+
+            $('#stage').change(function() {
+                            //	alert("change");
+                            var end = this.value;
+                            //  alert(end +"");
+                            var closed = "207";
+                            var dropped = "208";
+                            if (end == closed || end == dropped) {
+                                document.getElementById("nmd").required = false;
+                            } else {
+                                document.getElementById("nmd").required = true;
+                            }
+                        });
+
+        });
+        $(window).load(function() {
+            var parsed = <%- lead %>;
+            var datavalue = parsed[0];
+            alert(JSON.stringify(datavalue));
+            $("input[name='lname']").val(datavalue['leadname']);
+            $("input[name='emailid']").val(datavalue['emailid']);
+            $("input[name='phone']").val(datavalue['contactno']);
+            $("textarea[name='address']").val(datavalue['Address']);
+        });
+    </script>
+    <script>
+        function onUpdate() {
+            var form = $('#mainform');
+            alert("Step 1");
+            form.parsley().validate();
+
+            if (form.parsley().isValid()) {
+                /* if(true){*/
+                    var formdata = $('#mainform').serializeArray();
+                    var data = formdata.reduce(function(a, x) {
+                        a[x.name] = x.value;
+                        return a;
+                    }, {});
+                    Screenfields.push(data);
+                    alert(JSON.stringify(Screenfields));
+                            //                            alert("Step 2");
+                            $.ajax({
+                                type: "POST",
+                                url: "/updatedata",
+                                timeout: 4000,
+                                contentType: 'application/json ',
+                                data: JSON.stringify({
+                                    leadid: <%= lid %>,
+                                    formdata: JSON.stringify(Screenfields)
+                                }),
+                                success: function(data) {
+                                    var fdata = JSON.parse(JSON.stringify(data));
+                                    if (fdata.status == 0) {
+
+                                        //  $('#mainform ').trigger("reset");
+                                        alert("Lead updated successfully");
+                                 window.location.href = '/calendar';
+                                    } else {
+                                        // $('#mainform ').trigger("reset");
+                                        alert("Lead failed to save");
+
+                                    }
+                                    Screenfields = [];
+                                }
+                            });
+                        }
+                    }
+
+                    function onResch() {
+                            //    alert("Step 3");
+                            var form1 = $('#form1');
+                            form1.parsley().validate();
+                            if (form1.parsley().isValid()) {
+                                var formdata1 = $('#form1').serializeArray();
+                                var data1 = formdata1.reduce(function(a, x) {
+                                    a[x.name] = x.value;
+                                    return a;
+                                }, {});
+
+                                  var multi=$(".multipleSelect").val();
+                            if(multi !=null){
+                                data1["products"]=multi.toString();
+                            }else{
+                                data1["products"]='';  
+                            }
+                                Screenfields1.push(data1);
+                                //   alert(JSON.stringify(Screenfields1));
+                                // alert("Step 4");
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/updateschedule",
+                                    timeout: 4000,
+                                    contentType: 'application/json ',
+                                    data: JSON.stringify({
+                                        leadid: <%= lid %>,
+                                        formdata: JSON.stringify(Screenfields1),
+                                        leaddata : JSON.stringify(<%- lead %>)
+                                    }),
+                                    success: function(data) {
+                                        var fdata = JSON.parse(JSON.stringify(data));
+                                        if (fdata.status == 0) {
+                                            Screenfields1 = [];
+                                            $('#form1').trigger("reset");
+                                            alert("Data saved successfully");
+                                            window.location.href = '/calendar';
+                                        } else {
+                                            // $('#form1').trigger("reset");
+                                            alert("Schedule failed to save");
+                                            Screenfields1 = [];
+                                        }
+                                        
+                                    }
+                                });
+                                //alert("DONE with swag");
+                            } else {
+                                alert('Form not valid ');
+                            }
+                        };
+                    </script>
+
+                </body>
+
+                </html>

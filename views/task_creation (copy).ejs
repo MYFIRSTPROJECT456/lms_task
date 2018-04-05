@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+
+<%- include lib/apicalh01 %>
+    <!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
+    <link href="assets/plugins/bootstrap-wizard/css/bwizard.min.css" rel="stylesheet" />
+    <!-- ================== END PAGE LEVEL STYLE ================== -->
+
+<style type="text/css">
+    input,textarea,select,.multipleSelect,.selectpicker,.datepicker{
+        margin:0 0 10px 0;
+    }
+    .element {
+      position: relative;
+      top: 50%;
+      transform: translateY(-10%);
+  }
+    
+   
+</style>
+    <script>
+        var Screenfields = [];
+        var from_date = '';
+        var to_date = '';
+    </script>
+<body>
+    <!-- begin #page-loader -->
+    <div id="page-loader" class="fade in"><span class="spinner"></span></div>
+    <!-- end #page-loader -->
+
+    <!-- begin #page-container -->
+    <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+        <!-- begin #header -->
+        <%- include lib/apicalh02 %>
+
+                <!-- begin #content -->
+                <div id="content" class="content">
+                    <!-- begin row -->
+                    <div class="row">
+                        <!-- begin col-12 -->
+                        <div class="col-md-12">
+                            <!-- begin panel -->
+                            <div class="panel panel-inverse">
+                                <div class="panel-heading">
+                                    <div class="panel-heading-btn element">
+                                        <a href="javascript:onSubmit();" class="btn btn-xl btn-icon btn-circle btn-success"><i class="fa fa-save" ></i></a>
+                                    </div>
+                                    <h4 class="panel-title">ADHOC Task Creation</h4>
+                                </div>
+                                <div class="panel-body">
+                                    <form action="/" method="POST" id="formf" data-parsley-validate="true">
+                                        <div id="wizard">
+                                            <div>
+                                                <fieldset>
+                                                    <!-- begin row -->
+                                                    <div class="row">
+                                                        <!-- begin col-6 -->
+                                                        <div class="col-md-6">
+                                                            <label class="col-md-4">Project Name *</label>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control selectpicker" data-style="btn-white" name="prjname" required>
+                                                                    <option value="1" selected>ADHOC Project</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <label class="col-md-4">Task Name *</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="taskname" placeholder="Task Name" class="form-control" required />
+                                                            </div>
+                                                            
+                                                            <label class="col-md-4">Description *</label>
+                                                            <div class="col-md-8">
+                                                                <textarea class="form-control" placeholder="Task Description" rows="5" name="description" required></textarea>
+                                                            </div>
+                                                            
+                                                            <label class="col-md-4">Estimate hours *</label>
+                                                            <div class="col-md-8">
+                                                                <input type="number" name="esthours" placeholder="Estimate hours" maxlength="3" data-parsley-type="digits" class="form-control" required />
+                                                            </div>
+                                                            
+                                                            <label class="col-md-4">Recurrence *</label>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control selectpicker" api="v1/getinterval" name="interval" required>
+                                                                    <option value="NA" selected>NA</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <label class="col-md-4">Start Date *</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="startdate" class="form-control" id="fromdate" placeholder="Start Date" required/>
+                                                            </div>
+                                                            <label class="col-md-4">End Date</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="enddate" class="form-control" id="duedate" placeholder="End Date"/>
+                                                            </div>
+
+                                                            <!--
+                                                            <label class="col-md-4 control-label" for="">Doc Generation </label>
+                                                            <div class="col-md-8">
+                                                                <div class="radio-inline">
+                                                                    <label>
+                                                                        <input type="radio" name="docgen" value="1" checked /> Yes
+                                                                    </label>
+                                                                </div>
+                                                                <div class="radio-inline">
+                                                                    <label>
+                                                                        <input type="radio" name="docgen" value="0" /> No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+-->
+
+                                                            <label class="col-md-4">Assign To *</label>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-white" api="v1/getassignto" name="assignto" required>
+                                                                    <option value="0" selected>NA</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <label class="col-md-4 ">Document List </label>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control multipleSelect" data-style="btn-white" name="doclist" api="v1/getdoclist" id="doclist" multiple style="width: 100%">
+                                                                    <option value="NA" selected>NA</option>
+                                                                </select>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <!-- end row -->
+                                                </fieldset>
+                                            </div>
+
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- end panel -->
+                        </div>
+                        <!-- end col-12 -->
+                    </div>
+                    <!-- end row -->
+                </div>
+                <!-- end #content -->
+
+        <!-- begin theme-panel -->
+      
+        <!-- end theme-panel -->
+
+        <!-- begin scroll to top btn -->
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+        <!-- end scroll to top btn -->
+    </div>
+    <!-- end page container -->
+
+    <!-- ================== BEGIN BASE JS ================== -->
+    <%- include lib/apicalf02 %>
+   
+   
+    <!-- ================== END BASE JS ================== -->
+
+    <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+    <script src="assets/plugins/bootstrap-wizard/js/bwizard.js"></script>
+    <script src="assets/js/form-wizards.demo.min.js"></script>
+    <!-- ================== END PAGE LEVEL JS ================== -->
+
+            <script>
+                $(document).ready(function() {
+                    App.init();
+                    $("select[name='prjname'] option[value='1']").attr('selected', 'selected');
+                    var currentdate = new Date();
+                    to_date =  (currentdate.getMonth()+1+'/'+currentdate.getDate()+'/'+currentdate.getFullYear());  
+                    from_date =  (currentdate.getMonth()+1+'/'+currentdate.getDate()+'/'+currentdate.getFullYear());
+
+
+                    $('#fromdate').datepicker({autoclose: true}).
+                        on("changeDate", function (e) {
+                            // alert("Working"+JSON.stringify(e)+e['date']);
+                            var dateText = e['date'];
+                            var today = new Date();
+                            today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
+                            //Get the selected date (also at midnight)
+                            var selDate = Date.parse(dateText);
+                            if(selDate < today) {
+                                //If the selected date was before today, continue to show the datepicker
+                                alert("Past date not allowed");
+                                $('#fromdate').val('');
+                                $(inst).datepicker('show');
+                            }else if(selDate > to_date){
+                                alert("Start date must be before End date.");
+                                $('#fromdate').val('');
+                                $(inst).datepicker('show');
+                            }
+				else{
+                                from_date = selDate;
+                                // $(inst).datepicker('hide');
+
+                            }
+                    });
+
+                    $('#duedate').datepicker({autoclose: true}).
+                        on("changeDate", function (e) {
+                            // alert("Working"+JSON.stringify(e)+e['date']);
+                            var dateText = e['date'];
+                            var today = new Date();
+                            today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
+                            //Get the selected date (also at midnight)
+                            var selDate = Date.parse(dateText);
+                            // alert("fromdate : "+from_date + (selDate < from_date));
+                            if(selDate < today) {
+                                //If the selected date was before today, continue to show the datepicker
+                                alert("Past date not allowed");
+                                $('#duedate').val('');
+                                $(inst).datepicker('show');
+                            }else if(selDate < from_date) {
+                                //If the selected date was before today, continue to show the datepicker
+                                alert("End date must be after Start date.");
+                                $('#duedate').val('');
+                                $(inst).datepicker('show');
+                            }else {
+                                to_date = selDate;
+                                 // $(inst).datepicker('hide');
+                            }
+                    });
+                });
+            </script>
+            <script type="text/javascript">
+                function onSubmit() {
+                    var form = $('#formf');
+                    form.parsley().validate();
+                    if (form.parsley().isValid()) {
+                        //structure json
+                        var formdata = $('#formf').serializeArray();
+                        var data = formdata.reduce(function(a, x) {
+                            a[x.name] = x.value;
+                            return a;
+                        }, {});
+                        //  alert(JSON.stringify(data));
+                        Screenfields.push(data);
+                        //   alert(JSON.stringify(Screenfields));
+                        $.ajax({
+                            type: "POST",
+                            url: "/taskcreaterec",
+                            timeout: 6000,
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                 formdata: JSON.stringify(Screenfields)
+                            }),
+                            success: function(data) {
+                                var fdata = JSON.parse(JSON.stringify(data));
+                                if (fdata.status == '0') {
+                                    Screenfields = [];
+                                    alert("Data saved successfully");
+//                                    window.location.reload();
+                                    window.location.href = "/calendar"
+                                } else {
+                                    alert(fdata.err_msg);
+                                    Screenfields = [];
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                //                        alert(status+" "+error.Message+" "+xhr.responseText);
+                                alert("Please select the proper details");
+                                Screenfields = [];
+                            }
+
+                        });
+                    } else {
+//                        alert('Form not valid');
+                    }
+                };
+            </script>
+    </body>
+
+</html>

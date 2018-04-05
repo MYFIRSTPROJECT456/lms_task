@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<%- include lib/apicalh01 %>
+
+<style type="text/css">
+
+input,textarea,select{
+	margin:0 0 10px 0;
+}
+.element {
+	position: relative;
+	top: 50%;
+	transform: translateY(-10%);
+}
+</style>
+<script>
+	var from_date = '';
+	var to_date = '';
+	var taskid = "";
+	var Screenfields = [];
+</script>
+
+<body>
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+	
+	<!-- begin #page-container -->
+	<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+		<!-- begin #header -->
+		<%- include lib/apicalh02 %>
+		<!-- end #sidebar -->
+		<!-- begin #content -->
+		<div id="content" class="content">
+			<div class="row">
+				<!-- end col-2 -->
+				<!-- begin col-10 -->
+				<div class="col-md-12">
+					<div class="panel panel-inverse">
+						<div class="panel-heading">
+							<div class="panel-heading-btn element">
+								<a href="#modal-dialog1" class="btn btn-success btn-icon btn-circle" data-toggle="modal"><i class="fa fa-plus fa-1x" ></i></a>
+							</div>
+							<h4 class="panel-title">Project List </h4>
+						</div>
+						<div class="panel-body">
+							<table id="data-table" class="table table-striped table-bordered">
+								<thead>
+									<tr>
+										<th>Project Name</th>
+										<th>Task Name</th>
+										<th>Task Description</th>
+										<th>Estimated Hours</th>
+										<th>Assign to</th>
+										<th>Task Status</th>
+										<th>Due date</th>
+										<th></th>
+										<th style="display: none;">Due date</th>
+										
+									</tr>
+								</thead>
+								<tbody>
+									<% 
+									tasklist.forEach (function(list){               
+									%>
+									<tr id="<%= list.tasksrno %>" class="hover"> 
+
+										<td>
+											<%= list.projectname %>
+										</td>
+
+										<td>
+											<%= list.taskname %>
+										</td>
+										<td>
+											<%= list.taskDescription %>
+										</td>
+										<td>
+											<%= list.estimatehr %>
+										</td>
+										<td>
+											<%= list.assignto %>
+										</td>
+										<td>
+											<%= list.taskstatus %>
+										</td>
+										<td>
+											<%= list.taskduedate %>
+										</td>
+										<td>
+											<input type='button' class='btnDel  btn-success' id="<%= list.tasksrno %>" value='View History' />
+										</td>
+										<td style="display: none;">
+											<%= list.due %>
+										</td>
+									</tr>
+									<% }); %>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<!-- end col-10 -->
+			</div>
+			<!-- end row -->
+
+			<div class="modal fade" id="modal-dialog">
+				<div class="modal-dialog ">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h4 class="modal-title" name="title"></h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<!-- begin col-6 -->
+								<form action="/" method="POST" id="formf" data-parsley-validate="true">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="col-md-3 control-label">Project Name</label>
+											<div class="col-md-9">
+												<select class="form-control selectpicker" data-size="10" data-style="btn-white" name="prjname" api="v1/getprojects" required="" disabled="true">
+													<option value="NA" selected>NA</option>   
+												</select>
+											</div>
+											<!--                                                <label class="col-md-3 control-label">Task ID</label>-->
+											<div class="col-md-12">
+												<input type="hidden" class="form-control" name="taskid" placeholder="Task ID" />
+											</div>
+
+											<label class="col-md-3 control-label">Task Name</label>
+											<div class="col-md-9">
+												<input type="text" class="form-control" name="taskname" placeholder="Task Name" required="" />
+											</div>
+											<label class="col-md-3 control-label">Task Description</label>
+											<div class="col-md-9">
+												<textarea class="form-control" rows="5" style="width:100%;"  name="taskdesc" placeholder="Task Description" required></textarea>
+											</div>
+											<label class="col-md-3 control-label">Assign To</label>
+											<div class="col-md-9">
+
+                                                            <select class="form-control multipleSelect" name="assignto" api="v1/getassignto" placeholder="Select Assign" id="assignlist" multiple style="width: 100%" required>
+                                                            	<option value="NA" selected>NA</option>
+                                                            </select>
+                                                        </div>
+                                                        <label class="col-md-3 control-label">Estimated Hours</label>
+                                                        <div class="col-md-9">
+                                                        	<input type="number" maxlength="3" max="999" min="1" class="form-control" name="esthours" placeholder="Estimated Hours" required/>
+                                                        </div>
+                                                        
+                                                        <div class="col-md-12">
+                                                        	<input type="hidden" class="form-control" name="status" placeholder="Task status" />
+                                                        </div>
+
+                                                        <label class="col-md-3 control-label">Dependent Task</label>
+                                                        <div class="col-md-9">
+                                                        	
+                                                        	<select class="form-control selectpicker" id="depid" data-style="btn-white" name="depid" api="v1/getdoclist">
+                                                        		<option value="NA" selected>NA</option>                                             
+                                                        	</select>
+                                                        </div>
+                                                        
+                                                        <label class="col-md-3 control-label">Due Date</label>
+                                                        <div class="col-md-9">
+                                                        	<input type="text" class="form-control datepicker" name="duedate" placeholder="Due Date" required/>
+                                                        </div>
+                                                        
+                                                        <label class="col-md-3 control-label">Document List</label>
+                                                        <div class="col-md-9">
+                                                        	<select class="form-control multipleSelect"  data-style="btn-white" name="doclist" api="v1/getdoclist" id="doclist" multiple style="width: 100%">
+                                                        		<option value="NA" selected>NA</option>
+                                                        	</select>
+                                                        </div>
+                                                        
+
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <!-- end col-6 -->
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                    	<a href="javascript:onDelete();" id="btndelete" class="btn btn-sm btn-danger">Delete</a>
+                                    	<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+                                    	<a href="javascript:onSubmit();" class="btn btn-sm btn-success">Done</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modal-dialog1">
+                        	<div class="modal-dialog ">
+                        		<div class="modal-content">
+                        			<div class="modal-header">
+                        				<button type="button" class="close" data-dismiss="modal"  aria-hidden="true">×</button>
+                        				<h4 class="modal-title">Add Project</h4>
+                        			</div>
+                        			<div class="modal-body">
+                        				<div class="row">
+                        					<form action="/projectcreate" method="post" id="form1" data-parsley-validate="true">
+
+                        						<!-- begin col-6 -->
+                        						<div class="col-md-12">
+                        							<div class="form-group">
+                        								<label class="col-md-4 control-label">Project Name *</label>
+                        								<div class="col-md-8">
+                        									<input type="text" class="form-control" name="projectname" placeholder="Project Name" />
+                        								</div>
+                        							</div>
+                        							<div class="form-group">
+                        								<label class="col-md-4 control-label ">Project Description *</label>
+                        								<div class="col-md-8">
+                        									<textarea class="form-control" placeholder="Project Description" name="description" rows="2" required></textarea>
+                        								</div>
+                        							</div>
+                        							<div class="form-group">
+                        								<label class="col-md-4 control-label ">Start Date *</label>
+                        								<div class="col-md-8">
+                        									<input type="text" class="form-control" name="startdate" placeholder="Start Date" id="fromdate" required/>
+                        								</div>
+                        							</div>
+                        							<div class="form-group">
+                        								<label class="col-md-4 control-label ">Due Date *</label>
+
+                        								<div class="col-md-8">
+                        									<input type="text" class="form-control" id="duedate" name="duedate" placeholder="Due Date" required/>
+                        								</div>
+                        							</div>
+
+                        							<div class="form-group">
+                        								<label class="col-md-4 control-label ">Project Type *</label>
+                        								<div class="col-md-8">
+                        									<select class="form-control selectpicker" api="v1/gettaskgroups" name="task_group" required >
+                        										<option value="NA" selected>NA</option>
+                        									</select>
+                        								</div>
+                        							</div>					
+                        						</div>
+                        						<!-- end col-6 -->
+
+                        					</form>
+                        				</div>
+                        			</div>
+                        			<div class="modal-footer">
+                        				<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+                        				<a href="javascript:addProject();" class="btn btn-sm btn-success">Done</a>
+                        			</div>
+                        		</div>
+                        	</div>
+                        </div>
+                        
+                    </div>
+                    <!-- end #content -->
+                    
+                    <!-- begin theme-panel -->
+                    
+                    <!-- end theme-panel -->
+                    
+                    <!-- begin scroll to top btn -->
+                    <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+                    <!-- end scroll to top btn -->
+                </div>
+                <!-- end page container -->
+                
+                <!-- ================== BEGIN BASE JS ================== -->
+                <%- include lib/apicalf02 %>
+                
+                <!-- ================== END BASE JS ================== -->
+                
+                <script>
+                	$(document).ready(function() {
+                		App.init();
+                		$("#fromdate").attr('data-date-start-date','Date.default');
+                		$("#duedate").attr('data-date-start-date','Date.default');
+
+                		$("#fromdate").datepicker({todayHighlight: true,
+                			autoclose: true,
+                		}).on('changeDate', function (selected) {
+                			var minDate = new Date(selected.date.valueOf());
+                			$('#duedate').datepicker('setStartDate', minDate);
+                		});
+
+                		$("#duedate").datepicker({todayHighlight: true,
+                			autoclose: true
+                		}).on('changeDate', function (selected) {
+                			var minDate = new Date(selected.date.valueOf());
+                			$('#fromdate').datepicker('setEndDate', minDate);
+                		});
+                		     var table = $('#data-table').DataTable({
+            dom: 'lBfrtip',
+            buttons: [
+            { extend: 'copy', className: 'btn-sm' },
+            { extend: 'csv', className: 'btn-sm' },
+            { extend: 'excel', className: 'btn-sm' },
+            { extend: 'pdf', className: 'btn-sm' },
+            { extend: 'print', className: 'btn-sm' }
+            ],
+            responsive: true,
+            'rowCallback': function(row, data, index){
+                if(data[8] ==  0){
+                  $(row).find('td').css('background-color', '#ffcccc').css('font-weight', 'bold');
+              }
+              else{
+                  $(row).find('td').css('background-color', '#ffffff').css('font-weight', 'bold');
+              }
+     },
+         'columnDefs' : [
+     { 'visible': false, 'targets': [8] }
+     ]
+ });
+
+
+                		
+                		$('#data-table tbody').on('click', 'tr', function() {
+                			var data = table.row(this).id();
+                			taskid = data;
+                			if(taskid){
+                				$('#modal-dialog').modal('show');
+                			}
+                		});
+
+
+                		
+                	});
+
+                	$('#modal-dialog1').on('show.bs.modal', function(e) {
+                		$("select[name='task_group'] option[value='241']").remove();	
+                	});	
+
+                	$(".btnDel").click(function(event) {
+                		event.stopPropagation();
+                		var data =this.id;
+                		// alert(this.id);
+                		if(data){
+                			var form = $(document.createElement('form'));
+                			$(form).attr("action", "/task_reporting");
+                			$(form).attr("method", "POST");
+
+                			var input = $("<input>")
+                			.attr("type", "hidden")
+                			.attr("name", "taskid")
+                			.val(data);
+
+                			$(form).append($(input));
+                			form.appendTo( document.body )
+                			$(form).submit();
+                		}
+                	});	
+
+                	function addProject(){
+                		var form = $('#form1');
+                		form.submit();
+                	}
+
+                	$('#modal-dialog1').on('hidden.bs.modal', function () {
+                		$(this).find("input,textarea,select").val('').end();
+                		$('#form1').parsley().destroy();
+                		$('#form1').validate().resetForm();  
+                	})
+
+                </script>
+
+                <script>
+                	
+                	$('#modal-dialog').on('hidden.bs.modal', function () {
+                		$(this).find("input,textarea,select").val('').end();
+                		$(".multipleselect").select2('destroy');
+                		$(".multipleSelect").select2();
+                		$('#formf').parsley().destroy();
+                		$('#formf').validate().resetForm();   
+                	})
+
+                	$('#modal-dialog').on('show.bs.modal', function(e) {
+                		var dddata=[];
+                		var input =  $("#depid");
+                		var data=  <%- taskmgmtdd %>;
+                		for (var i = 0; i < data.length; i++) {
+                			if(data[i]["tasksrno"] != taskid){
+                				var ddobj={id:data[i]["tasksrno"],name:data[i]["taskname"]}
+                				dddata.push(ddobj);
+                			}
+                		}
+                		helpers.buildDropdown(
+                			JSON.parse(JSON.stringify(dddata)),
+                			input,
+                			'Select an option'
+                			);
+                		var modal = $(this);
+                		if (taskid !== "") {
+                			modal.find('#btndelete').show();
+                			modal.find('.modal-title').text('Update Task');
+                			$.ajax({
+                				type: "POST",
+                				url: "/gettaskdetails",
+                				timeout: 6000,
+                				contentType: 'application/json',
+                				data: JSON.stringify({
+                					taskid: taskid
+                				}),
+                				success: function(response) {
+                					var parsed = JSON.parse(JSON.stringify(response))[0];
+                					$(e.currentTarget).find("input[name='taskid']").val(parsed["tasksrno"]);
+                					$(e.currentTarget).find("input[name='status']").val(parsed["taskstatus"]);
+                					$(e.currentTarget).find("input[name='taskname']").val(parsed["taskname"]);
+                					$(e.currentTarget).find("textarea[name='taskdesc']").val(parsed["taskDescription"]); 
+                					$(e.currentTarget).find("input[name='esthours']").val(parsed["estimatehr"]);
+                					$("select[name='prjname'] option[value='" + parsed["prjid"] + "']").attr('selected', 'selected');
+                					if(parsed["due_date"]){    
+                						$(e.currentTarget).find("input[name='duedate']").val(parsed["due_date"]);
+                					} 
+                					
+                                // populate multiselect data
+                                var data = parsed["task_docs"];
+                                var valArr=data.split(",");
+                                $("#doclist").val(valArr).trigger('change');
+
+                                var data = parsed["assignto"];
+                                var valArr=data.split(",");
+                                $("#assignlist").val(valArr).trigger('change');
+                                
+                                $("select[name='prjname'] option:not(:selected)").prop('disabled', true);                                
+                                $(e.currentTarget).find("input[name='taskname']").attr('readOnly',true);
+                            },
+                            error:function(xhr, status,error){
+                            } 
+                        });
+                		}else{
+                			
+                		}
+                	});
+
+                	
+                	function onSubmit() {
+                		/*    var scrno = '555';*/
+                		var form = $('#formf');
+                		form.parsley().validate();
+                		if (form.parsley().isValid()) {
+                			$("select[name='prjname']").prop('disabled', false);
+                			$("select[name='prjname']").removeAttr('disabled');
+                			
+                   // $("input[name='duedate']").prop('disabled', false);
+                   // $("input[name='duedate']").removeAttr('disabled');
+                   var formdata = $('#formf').serializeArray();
+                   $("select[name='prjname']").attr('disabled', 'disabled');                          
+                   var data = formdata.reduce(function(a, x) {
+                   	a[x.name] = x.value;
+                   	return a;
+                   }, {});
+                   var multi=$("#doclist").val();
+                   if(multi !=null){
+                   	data["doclist"]=multi.toString();
+                   }else{
+                   	data["doclist"]='';  
+                   }
+                   var multia=$("#assignlist").val();
+                   if(multia !=null){
+                   	data["assignto"]=multia.toString();
+                   }else{
+                   	data["assignto"]='';  
+                   }
+                   Screenfields.push(data);
+                   $.ajax({
+                   	type: "POST",
+                   	url: "/taskasign",
+                   	timeout: 6000,
+                   	contentType: 'application/json',
+                   	data: JSON.stringify({
+                   		formdata: JSON.stringify(Screenfields)
+                   	}),
+                   	success: function(data) {
+                   		var fdata = JSON.parse(JSON.stringify(data));
+                   		if (fdata.status == '0') {
+                   			Screenfields = [];
+                   			alert("Data saved successfully");
+                   			$('#modal-dialog').modal('hide');
+                   			location.reload();
+                   		} else {
+                   			alert(fdata.status_msg);
+                   			Screenfields = [];
+                   		}
+                   	},error:function(xhr, status,error){
+                   		/* alert(status+" "+error.Message+" "+xhr.responseText); */
+                   	} 
+                   });
+               } else {
+//                          alert('Form not valid');
+}
+};
+
+function onDelete() {
+	
+	$.ajax({
+		type: "POST",
+		url: "/taskdelete",
+		timeout: 6000,
+		contentType: 'application/json',
+		data: JSON.stringify({
+			taskid: taskid
+		}),
+		success: function(data) {
+			var fdata = JSON.parse(JSON.stringify(data));
+			if (fdata.status == '0') {
+				
+				alert("Task deleted");
+				$('#modal-dialog').modal('hide');
+				location.reload();
+			} else {
+				alert(fdata.status_msg);
+			}
+		},error:function(xhr, status,error){
+		} 
+	});
+};
+</script>>
+
+
+
+</body>
+</html>

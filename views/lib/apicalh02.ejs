@@ -1,0 +1,59 @@
+<!-- begin #header -->
+        <div id="header" class="header navbar navbar-default navbar-fixed-top">
+            <!-- begin container-fluid -->
+            <div class="container-fluid">
+ <!-- begin mobile sidebar expand / collapse button -->
+                <div class="navbar-header" >
+                    <a href="/calendar" class="navbar-brand">
+                    <!-- <span><img src="assets/img/logo.jpg" width="50" height="45" alt=""  />Task Management</span> -->
+                    <span  style="padding-right:3px; padding-top: 3px; display:inline-block; font-weight: bold;">
+                                    <img src="assets/img/logo.jpg" style="width: 40px; height: 40px" alt="">
+                                    Task Management
+                                </span>
+                    </a>
+                </div>
+                <!-- end mobile sidebar expand / collapse button -->        
+                
+                <!-- begin header navigation right -->
+                <ul class="nav navbar-nav navbar-right">
+                   
+                    <li class="dropdown navbar-user">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                             <img src="assets/img/user.png" alt="" /> 
+                            <span class="hidden-xs"><%- user.enname %></span> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu animated fadeInLeft">
+                            <li class="arrow"></li>
+                        
+                            <li><a href="/logout">Log Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- end header navigation right -->
+            </div>
+            <!-- end container-fluid -->
+        </div>
+        <!-- end #header -->
+        
+        <!-- begin #sidebar -->
+        <div id="sidebar" class="sidebar">
+            <!-- begin sidebar scrollbar -->
+            <div data-scrollbar="true" data-height="100%">
+                <!-- begin sidebar user -->
+                <ul class="nav">
+                    <li class="nav-profile">
+                        <div class="image">
+                            <a href="javascript:;"><img src="assets/img/user.png" alt="" /></a>
+                        </div>
+                        <div class="info">
+                            <%- user.enname %>
+                        </div>
+                    </li>
+                </ul>
+                <!-- end sidebar user -->
+                <!-- begin sidebar nav -->
+            <%- include apicalm01 %>
+                <!-- end sidebar nav -->
+            </div>
+            <!-- end sidebar scrollbar -->
+        </div>
